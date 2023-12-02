@@ -11,21 +11,17 @@ public class Day02 {
     // =================================================================================================================
     public static int sumPossibleGameIds(String input) {
 
-        List<CubeCount> limits = List.of(new CubeCount(12, Color.RED), new CubeCount(13, Color.GREEN),
-                new CubeCount(14, Color.BLUE));
+        List<CubeCount> limits = List.of(new CubeCount(12, Color.RED), new CubeCount(13, Color.GREEN), new CubeCount(14, Color.BLUE));
 
         List<Game> games = parseGames(input);
 
         List<Game> impossibleGames = new ArrayList<>();
         for (Game game : games) {
             boolean isGamePossible = true;
-            for (List<CubeCount> set : game.cubeSets) {
-                // man kann die sets eigentlich ignorieren
-                for (CubeCount cubeCount : set) {
-                    for (CubeCount limit : limits) {
-                        if (cubeCount.type.equals(limit.type) && cubeCount.count > limit.count && (!impossibleGames.contains(game))) {
-                            impossibleGames.add(game);
-                        }
+            for (CubeCount cubeCount : game.cubeCounts) {
+                for (CubeCount limit : limits) {
+                    if (cubeCount.type.equals(limit.type) && cubeCount.count > limit.count && (!impossibleGames.contains(game))) {
+                        impossibleGames.add(game);
                     }
                 }
             }
@@ -48,15 +44,13 @@ public class Day02 {
             int maxRed = 0;
             int maxGreen = 0;
             int maxBlue = 0;
-            for (List<CubeCount> set : game.cubeSets) {
-                for (CubeCount cubeCount : set) {
-                    if (cubeCount.type.equals(Color.RED) && cubeCount.count > maxRed) {
-                        maxRed = cubeCount.count;
-                    } else if (cubeCount.type.equals(Color.GREEN) && (cubeCount.count > maxGreen)) {
-                        maxGreen = cubeCount.count;
-                    } else if (cubeCount.type.equals(Color.BLUE) && (cubeCount.count > maxBlue)) {
-                        maxBlue = cubeCount.count;
-                    }
+            for (CubeCount cubeCount : game.cubeCounts) {
+                if (cubeCount.type.equals(Color.RED) && cubeCount.count > maxRed) {
+                    maxRed = cubeCount.count;
+                } else if (cubeCount.type.equals(Color.GREEN) && (cubeCount.count > maxGreen)) {
+                    maxGreen = cubeCount.count;
+                } else if (cubeCount.type.equals(Color.BLUE) && (cubeCount.count > maxBlue)) {
+                    maxBlue = cubeCount.count;
                 }
             }
             powers.add(maxRed * maxGreen * maxBlue);
@@ -67,7 +61,8 @@ public class Day02 {
 
 
     private static List<Game> parseGames(String input) {
-        String[] lines = input.split("\n");
+        // replace ; because it doesn't have any significance for both problems lol
+        String[] lines = input.replace(";", ",").split("\n");
 
         List<Game> games = new ArrayList<>();
 
@@ -75,21 +70,18 @@ public class Day02 {
         for (String line : lines) {
             Game game = new Game();
             game.id = idCount;
-            List<List<CubeCount>> cubeSets = new ArrayList<>();
+            List<CubeCount> cubeCounts = new ArrayList<>();
 
             String cutGame = line.substring(line.indexOf(":") + 1);
-            String[] rawSets = cutGame.split(";");
-            for (String rawSet : rawSets) {
-                List<String> rawCubes = Arrays.stream(rawSet.split(",")).map(String::trim).toList();
-                List<CubeCount> cubeSet = new ArrayList<>();
-                for (String rawCube : rawCubes) {
-                    String[] splitRawCube = rawCube.split(" ");
-                    CubeCount cubeCount = new CubeCount(Integer.parseInt(splitRawCube[0]), Color.valueOf(splitRawCube[1].toUpperCase()));
-                    cubeSet.add(cubeCount);
-                }
-                cubeSets.add(cubeSet);
+
+            List<String> rawCubes = Arrays.stream(cutGame.split(",")).map(String::trim).toList();
+            for (String rawCube : rawCubes) {
+                String[] splitRawCube = rawCube.split(" ");
+                CubeCount cubeCount = new CubeCount(Integer.parseInt(splitRawCube[0]), Color.valueOf(splitRawCube[1].toUpperCase()));
+                cubeCounts.add(cubeCount);
             }
-            game.cubeSets = cubeSets;
+
+            game.cubeCounts = cubeCounts;
             games.add(game);
             idCount++;
         }
@@ -99,7 +91,7 @@ public class Day02 {
 
     static class Game {
         int id;
-        List<List<CubeCount>> cubeSets;
+        List<CubeCount> cubeCounts;
     }
 
     static class CubeCount {
