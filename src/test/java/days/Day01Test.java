@@ -14,7 +14,7 @@ class Day01Test {
     String exampleInputPart2;
     String realInputPart2;
 
-    Day01Test() throws IOException {
+    Day01Test() {
         this.exampleInputPart1 = AocUtils.readFile("src/test/java/resources/day01/Day01_1ExampleInput.txt");
         this.exampleInputPart2 = AocUtils.readFile("src/test/java/resources/day01/Day01_2ExampleInput.txt");
 
