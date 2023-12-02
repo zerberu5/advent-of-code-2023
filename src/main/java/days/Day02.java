@@ -2,6 +2,7 @@ package days;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Day02 {
@@ -11,26 +12,33 @@ public class Day02 {
     // =================================================================================================================
     public static int sumPossibleGameIds(String input) {
 
-        List<CubeCount> limits = List.of(new CubeCount(12, Color.RED), new CubeCount(13, Color.GREEN), new CubeCount(14, Color.BLUE));
-
         List<Game> games = parseGames(input);
 
-        List<Game> impossibleGames = new ArrayList<>();
-        for (Game game : games) {
-            boolean isGamePossible = true;
-            for (CubeCount cubeCount : game.cubeCounts) {
-                for (CubeCount limit : limits) {
-                    if (cubeCount.type.equals(limit.type) && cubeCount.count > limit.count && (!impossibleGames.contains(game))) {
-                        impossibleGames.add(game);
-                    }
-                }
+        List<Integer> gameIndicesToBeRemoved = new ArrayList<>();
+        for (int i = 0; i < games.size(); i++) {
+            if (isGameImpossible(games.get(i))) {
+                gameIndicesToBeRemoved.add(i);
             }
         }
 
-        Integer allGamesIdSum = games.stream().map(game -> game.id).toList().stream().reduce(0, Integer::sum);
-        Integer impossibleGamesIdSum = impossibleGames.stream().map(game -> game.id).toList().stream().reduce(0, Integer::sum);
+        // reversed, so the indices of following games won't change
+        Collections.reverse(gameIndicesToBeRemoved);
+        for (int i : gameIndicesToBeRemoved) {
+            games.remove(i);
+        }
 
-        return allGamesIdSum - impossibleGamesIdSum;
+        return games.stream().map(game -> game.id).toList().stream().reduce(0, Integer::sum);
+    }
+
+    private static boolean isGameImpossible(Game game) {
+        for (CubeCount cubeCount : game.cubeCounts) {
+            if (cubeCount.count > 12 && cubeCount.type.equals(Color.RED)
+                    || cubeCount.count > 13 && cubeCount.type.equals(Color.GREEN)
+                    || cubeCount.count > 14 && cubeCount.type.equals(Color.BLUE)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // =================================================================================================================
