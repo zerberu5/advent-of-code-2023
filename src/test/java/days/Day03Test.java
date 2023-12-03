@@ -7,21 +7,31 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class Day03Test {
 
-    String exampleInputPart1;
-    String realInputPart1;
+    String exampleInput;
+    String realInput;
 
     public Day03Test() {
-        this.exampleInputPart1 = AocUtils.readFile("src/test/java/resources/day03/Day03_ExampleInput.txt");
-        this.realInputPart1 = AocUtils.readFile("src/test/java/resources/day03/Day03_RealInput.txt");
+        this.exampleInput = AocUtils.readFile("src/test/java/resources/day03/Day03_ExampleInput.txt");
+        this.realInput = AocUtils.readFile("src/test/java/resources/day03/Day03_RealInput.txt");
     }
 
     @Test
     void testSumSymbolNumsExampleInput() {
-        assertEquals(4361, Day03.sumPartNumbers(exampleInputPart1));
+        assertEquals(4361, Day03.sumPartNumbers(exampleInput));
     }
 
     @Test
     void testSumSymbolNumsRealInput() {
-        assertEquals(4361, Day03.sumPartNumbers(realInputPart1));
+        assertEquals(535078, Day03.sumPartNumbers(realInput));
+    }
+
+    @Test
+    void testSumUpGearRatiosExamleInput() {
+        assertEquals(467835, Day03.sumUpGearRatios(exampleInput));
+    }
+
+    @Test
+    void testSumUpGearRatiosRealInput() {
+        assertEquals(75312571, Day03.sumUpGearRatios(realInput));
     }
 }

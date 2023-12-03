@@ -2,36 +2,25 @@ package days;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Day03 {
 
     static String[][] grid;
 
+    // =================================================================================================================
+    // PART 1
+    // =================================================================================================================
     public static int sumPartNumbers(String input) {
-
         grid = loadGrid(input);
         List<IntContainer> intContainers = getNumberCoordinates(input);
 
         List<Integer> partNumber = new ArrayList<>();
         for (IntContainer intContainer : intContainers) {
             int value = intContainer.value;
-            if (touchesUpperLeftSymbol(intContainer)) {
-                partNumber.add(value);
-            } else if (touchesUpperRightSymbol(intContainer)) {
-                partNumber.add(value);
-            } else if (touchesBottomLeftSymbol(intContainer)) {
-                partNumber.add(value);
-            } else if (touchesBottomRightSymbol(intContainer)) {
-                partNumber.add(value);
-            } else if (touchesUpperSymbol(intContainer)) {
-                partNumber.add(value);
-            } else if (touchesLeftSymbol(intContainer)) {
-                partNumber.add(value);
-            } else if (touchesRightSymbol(intContainer)) {
-                partNumber.add(value);
-            } else if (touchesBottomSymbol(intContainer)) {
+            if (touchesUpperLeftSymbol(intContainer) || touchesUpperRightSymbol(intContainer) ||
+                    touchesBottomLeftSymbol(intContainer) || touchesBottomRightSymbol(intContainer) ||
+                    touchesUpperSymbol(intContainer) || touchesLeftSymbol(intContainer) ||
+                    touchesRightSymbol(intContainer) || touchesBottomSymbol(intContainer)) {
                 partNumber.add(value);
             }
 
@@ -175,5 +164,151 @@ public class Day03 {
         int row;
         List<Integer> indices;
         int value;
+    }
+
+    // =================================================================================================================
+    // PART 2
+    // =================================================================================================================
+    public static int sumUpGearRatios(String input) {
+        grid = loadGrid(input);
+        List<IntContainer> intContainers = getNumberCoordinates(input);
+        List<Star> stars = getStarCoordinates(grid);
+
+        for (Star star : stars) {
+            for (IntContainer intContainer : intContainers) {
+                if (starTouchesIntContainer(star, intContainer)) {
+                    star.touchingValues.add(intContainer.value);
+                }
+            }
+        }
+
+        List<Star> starWithTwoTouches = stars.stream().filter(star -> star.touchingValues.size() == 2).toList();
+
+        int sum = 0;
+
+        for (Star star : starWithTwoTouches) {
+            int ratio = star.touchingValues.get(0) * star.touchingValues.get(1);
+            sum += ratio;
+        }
+
+        return sum;
+    }
+
+    private static boolean starTouchesIntContainer(Star star, IntContainer intContainer) {
+        return touchesUpperLeftStar(star, intContainer) || touchesUpperRightStar(star, intContainer)
+                || touchesBottomLeftStar(star, intContainer) || touchesUpperStar(star, intContainer)
+                || touchesBottomRightStar(star, intContainer) || touchesLeftStar(star, intContainer)
+                || touchesBottomStar(star, intContainer) || touchesRightStar(star, intContainer);
+    }
+
+    private static boolean touchesUpperLeftStar(Star star, IntContainer intContainer) {
+        List<Integer> indices = intContainer.indices;
+        int row = intContainer.row - 1;
+        int column = indices.get(0) - 1;
+        if (row >= 0 && column >= 0) {
+            return isStar(grid[row][column]) && (row == star.row && column == star.column);
+        }
+        return false;
+    }
+
+    private static boolean touchesUpperRightStar(Star star, IntContainer intContainer) {
+        List<Integer> indices = intContainer.indices;
+        int row = intContainer.row - 1;
+        int column = indices.get(indices.size() - 1) + 1;
+        if (row >= 0 && column < grid.length) {
+            return isStar(grid[row][column]) && (row == star.row && column == star.column);
+        }
+        return false;
+    }
+
+    private static boolean touchesBottomLeftStar(Star star, IntContainer intContainer) {
+        List<Integer> indices = intContainer.indices;
+        int row = intContainer.row + 1;
+        int column = indices.get(0) - 1;
+        if (row < grid.length && column >= 0) {
+            return isStar(grid[row][column]) && (row == star.row && column == star.column);
+        }
+        return false;
+    }
+
+    private static boolean touchesBottomRightStar(Star star, IntContainer intContainer) {
+        List<Integer> indices = intContainer.indices;
+        int row = intContainer.row + 1;
+        int column = indices.get(indices.size() - 1) + 1;
+        if (row < grid.length && column < grid.length) {
+            return isStar(grid[row][column]) && (row == star.row && column == star.column);
+        }
+
+        return false;
+    }
+
+    private static boolean touchesUpperStar(Star star, IntContainer intContainer) {
+        List<Integer> indices = intContainer.indices;
+        int row = intContainer.row - 1;
+        if (row >= 0) {
+            for (Integer column : indices) {
+                if (isStar(grid[row][column]) && (row == star.row && column == star.column)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean touchesLeftStar(Star star, IntContainer intContainer) {
+        int column = intContainer.indices.get(0) - 1;
+        if (column >= 0) {
+            return isStar(grid[intContainer.row][column]) && (intContainer.row == star.row && column == star.column);
+        }
+        return false;
+    }
+
+    private static boolean touchesRightStar(Star star, IntContainer intContainer) {
+        int column = intContainer.indices.get(intContainer.indices.size() - 1) + 1;
+        if (column < grid.length) {
+            return isStar(grid[intContainer.row][column]) && (intContainer.row == star.row && column == star.column);
+        }
+        return false;
+    }
+
+    private static boolean touchesBottomStar(Star star, IntContainer intContainer) {
+        List<Integer> indices = intContainer.indices;
+        int row = intContainer.row + 1;
+        if (row < grid.length) {
+            for (Integer column : indices) {
+                if (isStar(grid[row][column]) && (row == star.row && column == star.column)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static List<Star> getStarCoordinates(String[][] grid) {
+        List<Star> stars = new ArrayList<>();
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j].equals("*")) {
+                    Star star = new Star();
+                    star.row = i;
+                    star.column = j;
+                    star.touchingValues = new ArrayList<>();
+                    stars.add(star);
+                }
+            }
+        }
+        return stars;
+    }
+
+    static boolean isStar(String str) {
+        char c = str.charAt(0);
+        return c == '*';
+    }
+
+    static class Star {
+        int row;
+        int column;
+        List<Integer> touchingValues;
     }
 }
