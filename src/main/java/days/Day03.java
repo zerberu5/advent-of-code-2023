@@ -30,7 +30,7 @@ public class Day03 {
     }
 
     private static boolean touchesUpperLeftSymbol(IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row - 1;
         int column = indices.get(0) - 1;
         if (row >= 0 && column >= 0) {
@@ -40,7 +40,7 @@ public class Day03 {
     }
 
     private static boolean touchesUpperRightSymbol(IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row - 1;
         int column = indices.get(indices.size() - 1) + 1;
         if (row >= 0 && column < grid.length) {
@@ -50,7 +50,7 @@ public class Day03 {
     }
 
     private static boolean touchesBottomLeftSymbol(IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row + 1;
         int column = indices.get(0) - 1;
         if (row < grid.length && column >= 0) {
@@ -60,7 +60,7 @@ public class Day03 {
     }
 
     private static boolean touchesBottomRightSymbol(IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row + 1;
         int column = indices.get(indices.size() - 1) + 1;
         if (row < grid.length && column < grid.length) {
@@ -71,7 +71,7 @@ public class Day03 {
     }
 
     private static boolean touchesUpperSymbol(IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row - 1;
         if (row >= 0) {
             for (Integer column : indices) {
@@ -85,7 +85,7 @@ public class Day03 {
     }
 
     private static boolean touchesLeftSymbol(IntContainer intContainer) {
-        int column = intContainer.indices.get(0) - 1;
+        int column = intContainer.valueIndices.get(0) - 1;
         if (column >= 0) {
             return isSymbol(grid[intContainer.row][column]);
         }
@@ -93,7 +93,7 @@ public class Day03 {
     }
 
     private static boolean touchesRightSymbol(IntContainer intContainer) {
-        int column = intContainer.indices.get(intContainer.indices.size() - 1) + 1;
+        int column = intContainer.valueIndices.get(intContainer.valueIndices.size() - 1) + 1;
         if (column < grid.length) {
             return isSymbol(grid[intContainer.row][column]);
         }
@@ -101,7 +101,7 @@ public class Day03 {
     }
 
     private static boolean touchesBottomSymbol(IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row + 1;
         if (row < grid.length) {
             for (Integer column : indices) {
@@ -147,7 +147,7 @@ public class Day03 {
                         i++;
                     }
                     intContainer.value = Integer.parseInt(valueStr);
-                    intContainer.indices = indices;
+                    intContainer.valueIndices = indices;
                     intContainers.add(intContainer);
                 }
             }
@@ -162,7 +162,7 @@ public class Day03 {
 
     static class IntContainer {
         int row;
-        List<Integer> indices;
+        List<Integer> valueIndices;
         int value;
     }
 
@@ -202,7 +202,7 @@ public class Day03 {
     }
 
     private static boolean touchesUpperLeftStar(Star star, IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row - 1;
         int column = indices.get(0) - 1;
         if (row >= 0 && column >= 0) {
@@ -212,7 +212,7 @@ public class Day03 {
     }
 
     private static boolean touchesUpperRightStar(Star star, IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row - 1;
         int column = indices.get(indices.size() - 1) + 1;
         if (row >= 0 && column < grid.length) {
@@ -222,7 +222,7 @@ public class Day03 {
     }
 
     private static boolean touchesBottomLeftStar(Star star, IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row + 1;
         int column = indices.get(0) - 1;
         if (row < grid.length && column >= 0) {
@@ -232,7 +232,7 @@ public class Day03 {
     }
 
     private static boolean touchesBottomRightStar(Star star, IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row + 1;
         int column = indices.get(indices.size() - 1) + 1;
         if (row < grid.length && column < grid.length) {
@@ -243,7 +243,7 @@ public class Day03 {
     }
 
     private static boolean touchesUpperStar(Star star, IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row - 1;
         if (row >= 0) {
             for (Integer column : indices) {
@@ -257,7 +257,7 @@ public class Day03 {
     }
 
     private static boolean touchesLeftStar(Star star, IntContainer intContainer) {
-        int column = intContainer.indices.get(0) - 1;
+        int column = intContainer.valueIndices.get(0) - 1;
         if (column >= 0) {
             return isStar(grid[intContainer.row][column]) && (intContainer.row == star.row && column == star.column);
         }
@@ -265,7 +265,7 @@ public class Day03 {
     }
 
     private static boolean touchesRightStar(Star star, IntContainer intContainer) {
-        int column = intContainer.indices.get(intContainer.indices.size() - 1) + 1;
+        int column = intContainer.valueIndices.get(intContainer.valueIndices.size() - 1) + 1;
         if (column < grid.length) {
             return isStar(grid[intContainer.row][column]) && (intContainer.row == star.row && column == star.column);
         }
@@ -273,7 +273,7 @@ public class Day03 {
     }
 
     private static boolean touchesBottomStar(Star star, IntContainer intContainer) {
-        List<Integer> indices = intContainer.indices;
+        List<Integer> indices = intContainer.valueIndices;
         int row = intContainer.row + 1;
         if (row < grid.length) {
             for (Integer column : indices) {
