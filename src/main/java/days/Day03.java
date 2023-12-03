@@ -166,25 +166,6 @@ public class Day03 {
         return intContainers;
     }
 
-
-    private static int sumAllInts(String input) {
-        List<Integer> intList = findIntegers(input);
-        return intList.stream().reduce(0, Integer::sum);
-    }
-
-    // baeldung
-    private static List<Integer> findIntegers(String stringToSearch) {
-        Pattern integerPattern = Pattern.compile("-?\\d+");
-        Matcher matcher = integerPattern.matcher(stringToSearch);
-
-        List<String> integerList = new ArrayList<>();
-        while (matcher.find()) {
-            integerList.add(matcher.group());
-        }
-
-        return integerList.stream().map(Integer::parseInt).toList();
-    }
-
     private static boolean isSymbol(String str) {
         char c = str.charAt(0);
         return !(Character.isDigit(c) || c == '.');
@@ -195,5 +176,4 @@ public class Day03 {
         List<Integer> indices;
         int value;
     }
-
 }
