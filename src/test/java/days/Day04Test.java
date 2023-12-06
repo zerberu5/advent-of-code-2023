@@ -29,4 +29,9 @@ class Day04Test {
     void testCalcCardInstancesExampleInput() {
         assertEquals(30, Day04.calcCardInstances(exampleInput));
     }
+
+    @Test
+    void testCalcCardInstancesRealInput() {
+        assertEquals(9997537, Day04.calcCardInstances(realInput));
+    }
 }
