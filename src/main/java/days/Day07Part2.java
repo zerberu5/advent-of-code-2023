@@ -220,15 +220,15 @@ public class Day07Part2 {
 
     private static void updateThree(Hand hand) {
         Map<String, Integer> charToOccurences = mapCharToOccurences(hand.cards);
-        String pairCard;
+        String trippleCard;
         for (Map.Entry<String, Integer> entry : charToOccurences.entrySet()) {
-            pairCard = entry.getKey();
+            trippleCard = entry.getKey();
             if (entry.getValue() == 3) {
-                if (pairCard.equals("J")) {
+                if (trippleCard.equals("J")) {
                     char highestValueCard = getHighestValueCard(hand);
                     hand.disguisedJokerCards = hand.cards.replace('J', highestValueCard);
                 } else {
-                    hand.disguisedJokerCards = hand.cards.replace('J', entry.getKey().charAt(0));
+                    hand.disguisedJokerCards = hand.cards.replace('J', trippleCard.charAt(0));
                 }
                 return;
             }
