@@ -218,11 +218,18 @@ public class Day07Part2 {
         hand.disguisedJokerCards = hand.cards.replace('J', highest.getKey().charAt(0));
     }
 
-    public static void updateThree(Hand hand) {
+    private static void updateThree(Hand hand) {
         Map<String, Integer> charToOccurences = mapCharToOccurences(hand.cards);
+        String pairCard;
         for (Map.Entry<String, Integer> entry : charToOccurences.entrySet()) {
+            pairCard = entry.getKey();
             if (entry.getValue() == 3) {
-                hand.disguisedJokerCards = hand.cards.replace('J', entry.getKey().charAt(0));
+                if (pairCard.equals("J")) {
+                    char highestValueCard = getHighestValueCard(hand);
+                    hand.disguisedJokerCards = hand.cards.replace('J', highestValueCard);
+                } else {
+                    hand.disguisedJokerCards = hand.cards.replace('J', entry.getKey().charAt(0));
+                }
                 return;
             }
         }
@@ -230,7 +237,7 @@ public class Day07Part2 {
 
     private static void updateTwoPair(Hand hand) {
         Map<String, Integer> charToOccurences = mapCharToOccurences(hand.cards);
-        Map.Entry<String, Integer> highest = new AbstractMap.SimpleEntry<String, Integer>(" ", 0);
+        Map.Entry<String, Integer> highest = new AbstractMap.SimpleEntry<>(" ", 0);
         for (Map.Entry<String, Integer> entry : charToOccurences.entrySet()) {
             if (entry.getValue() == 2) {
                 if (getCardToStrengthMap().get(entry.getKey().charAt(0)) > getCardToStrengthMap().get(highest.getKey().charAt(0))) {
@@ -269,7 +276,7 @@ public class Day07Part2 {
 
     private static char getHighestValueCard(Hand hand) {
         int highestValue = 0;
-        char observedCard = ' ';
+        char observedCard;
         char highestCard = ' ';
         for (int i = 0; i < hand.cards.length(); i++) {
             observedCard = hand.cards.charAt(i);
@@ -302,18 +309,6 @@ public class Day07Part2 {
         }
 
         return true;
-    }
-
-    private static int countPairsJoker(Hand hand) {
-        Map<String, Integer> charToOccurences = mapCharToOccurences(hand.cards);
-        int count = 0;
-        for (Map.Entry<String, Integer> entry : charToOccurences.entrySet()) {
-            if (entry.getValue() == 2) {
-                count++;
-            }
-        }
-
-        return count;
     }
 
     // Stackoverflow
