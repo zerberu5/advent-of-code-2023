@@ -9,10 +9,12 @@ class Day07Test {
 
     String exampleInput;
     String realInput;
+    String folmingInput;
 
     public Day07Test() {
         this.exampleInput = AocUtils.readFile("src/test/java/resources/day07/Day07_ExampleInput.txt");
         this.realInput = AocUtils.readFile("src/test/java/resources/day07/Day07_RealInput.txt");
+        this.folmingInput = AocUtils.readFile("src/test/java/resources/day07/Day07_FolmingInput.txt");
     }
 
 
@@ -34,5 +36,10 @@ class Day07Test {
     @Test
     void testCalcTotalWinningsWithJokerRealInput() {
         assertEquals(251421071, Day07Part2.calcTotalWinningsWithJoker(realInput));
+    }
+
+    @Test
+    void testCalcTotalWinningsWithJokerFolmingInput() {
+        assertEquals(247885995, Day07Part2.calcTotalWinningsWithJoker(folmingInput));
     }
 }
