@@ -25,4 +25,14 @@ class Day07Test {
     void testCalcTotalWinningsRealInput() {
         assertEquals(251121738, Day07.calcTotalWinnings(realInput));
     }
+
+    @Test
+    void testCalcTotalWinningsWithJokerExampleInput() {
+        assertEquals(5905, Day07Part2.calcTotalWinningsWithJoker(exampleInput));
+    }
+
+    @Test
+    void testCalcTotalWinningsWithJokerRealInput() {
+        assertEquals(251421071, Day07Part2.calcTotalWinningsWithJoker(realInput));
+    }
 }
