@@ -7,11 +7,55 @@ import java.util.NoSuchElementException;
 
 public class Day08 {
 
+    public static long countStepsToReachEndFromAllAs(String input) {
+        List<String> directions = parseDirections(input);
+        List<Node> nodes = parseNodes(input);
+        List<Node> initialNodes = getInitialNodes(nodes);
+
+        long stepCount = 0;
+
+        for (int i = 0; i < directions.size(); i++) {
+            String direction = directions.get(i);
+            overrideNodes(direction, initialNodes);
+            stepCount++;
+
+            if (stepCount % 1_000_000_000 == 0) {
+                System.out.println(stepCount);
+            }
+
+            if (allNodesEndWithZ(initialNodes)) {
+                return stepCount;
+            }
+
+            i = repeatLoopIfNecessary(i, directions);
+        }
+
+        return 0;
+    }
+
     private static int repeatLoopIfNecessary(int i, List<String> directions) {
         if (i == directions.size() - 1) {
             i = -1;
         }
         return i;
+    }
+
+    private static void overrideNodes(String direction, List<Node> nodes) {
+        nodes.replaceAll(node -> overrideNode(direction, node));
+    }
+
+    private static boolean allNodesEndWithZ(List<Node> nodes) {
+        for (Node node : nodes) {
+            if (!node.name.endsWith("Z")) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static List<Node> getInitialNodes(List<Node> nodes) {
+        return new ArrayList<>(nodes.stream().filter(node -> node.name.endsWith("A")).toList());
     }
 
     public static int countStepsToReachEnd(String input) {

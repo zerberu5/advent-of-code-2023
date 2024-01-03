@@ -40,4 +40,19 @@ class Day08Test {
     void testCountStepsToReachEndFolmingInput() {
         assertEquals(18113, Day08.countStepsToReachEnd(folmingInput));
     }
+
+    @Test
+    void testCountStepsToReachEndFromAllAsExampleInput() {
+        assertEquals(6, Day08.countStepsToReachEndFromAllAs(exampleInputPart2));
+    }
+
+    @Test
+    void testCountStepsToReachEndFromAllAsRealInput() {
+        assertEquals(6, Day08.countStepsToReachEndFromAllAs(realInput));
+    }
+
+    @Test
+    void testCountStepsToReachEndFromAllAsFolmingInput() {
+        assertEquals(12_315_788_159_977L, Day08.countStepsToReachEndFromAllAs(folmingInput));
+    }
 }
