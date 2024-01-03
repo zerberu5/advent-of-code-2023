@@ -2,48 +2,56 @@ package days;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Day08 {
+
+    private static int repeatLoopIfNecessary(int i, List<String> directions) {
+        if (i == directions.size() - 1) {
+            i = -1;
+        }
+        return i;
+    }
 
     public static int countStepsToReachEnd(String input) {
 
         List<String> directions = parseDirections(input);
-        List<Node> nodesToLeftRight = parseNodes(input);
+        List<Node> nodes = parseNodes(input);
+        Node node = getInitialNode(nodes);
 
-        int start = 0;
-        int end = nodesToLeftRight.size() - 1;
-        int count = 0;
-        int directionsCount = 0;
-        Node node = nodesToLeftRight.get(start);
-        while (start != end) {
-            String direction = directions.get(directionsCount);
-            if (direction.equals("L")) {
-                start = getIndexOfNodeString(nodesToLeftRight, node.instruction.left);
-                node = nodesToLeftRight.get(start);
-            } else if (direction.equals("R")) {
-                start = getIndexOfNodeString(nodesToLeftRight, node.instruction.right);
-                node = nodesToLeftRight.get(start);
+        int stepCount = 0;
+        for (int i = 0; i < directions.size(); i++) {
+
+            String direction = directions.get(i);
+            node = overrideNode(direction, node);
+            stepCount++;
+
+            if (node.name.equals("ZZZ")) {
+                return stepCount;
             }
-            count++;
-            directionsCount++;
-            if (directionsCount == directions.size()) {
-                directionsCount = 0;
-            }
+
+            i = repeatLoopIfNecessary(i, directions);
         }
 
-        return count;
+        return 0;
     }
 
-    private static int getIndexOfNodeString(List<Node> nodesToLeftRight, String nodeStr) {
-        int index = 0;
-        for (int i = 0; i < nodesToLeftRight.size(); i++) {
-            if (nodesToLeftRight.get(i).location.equals(nodeStr)) {
-                index = i;
-            }
+    private static Node overrideNode(String direction, Node node) {
+        if (direction.equals("L")) {
+            node = node.nodeLeft;
+        } else {
+            node = node.nodeRight;
         }
-        return index;
+
+        return node;
+    }
+
+    private static Node getInitialNode(List<Node> nodes) {
+        return nodes.stream()
+                .filter(node -> "AAA".equals(node.name))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Initial node with name 'AAA' not found"));
     }
 
     private static List<Node> parseNodes(String input) {
@@ -52,13 +60,33 @@ public class Day08 {
         List<Node> allNodes = new ArrayList<>();
         for (int i = 2; i < split.length; i++) {
             String[] rawNodeToInstruction = split[i].split(" = ");
-            String location = rawNodeToInstruction[0];
+            String nodeName = rawNodeToInstruction[0];
+            Node node = new Node(nodeName);
+            allNodes.add(node);
+        }
+
+        for (int i = 2; i < split.length; i++) {
+            String[] rawNodeToInstruction = split[i].split(" = ");
             String instructions = rawNodeToInstruction[1].substring(1, rawNodeToInstruction[1].length() - 1);
             String[] leftRight = instructions.split(", ");
-            String left = leftRight[0];
-            String right = leftRight[1];
-            Instruction instruction = new Instruction(left, right);
-            allNodes.add(new Node(location, instruction));
+
+            Node node = allNodes.get(i - 2);
+
+            // left
+            String nodeLeftRaw = leftRight[0];
+            for (Node nodeLeft : allNodes) {
+                if (nodeLeftRaw.equals(nodeLeft.name)) {
+                    node.nodeLeft = nodeLeft;
+                }
+            }
+
+            // right
+            String nodeRightRaw = leftRight[1];
+            for (Node nodeRight : allNodes) {
+                if (nodeRightRaw.equals(nodeRight.name)) {
+                    node.nodeRight = nodeRight;
+                }
+            }
         }
 
         return allNodes;
@@ -69,22 +97,12 @@ public class Day08 {
     }
 
     static class Node {
-        String location;
-        Instruction instruction;
+        String name;
+        Node nodeLeft;
+        Node nodeRight;
 
-        public Node(String location, Instruction instruction) {
-            this.location = location;
-            this.instruction = instruction;
-        }
-    }
-
-    static class Instruction {
-        String left;
-        String right;
-
-        public Instruction(String left, String right) {
-            this.left = left;
-            this.right = right;
+        public Node(String name) {
+            this.name = name;
         }
     }
 }

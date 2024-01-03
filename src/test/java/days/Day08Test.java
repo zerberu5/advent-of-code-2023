@@ -9,6 +9,7 @@ class Day08Test {
 
     String example1Input;
     String example2Input;
+    String exampleInputPart2;
     String realInput;
     String folmingInput;
 
@@ -17,6 +18,7 @@ class Day08Test {
         this.example2Input = AocUtils.readFile("src/test/java/resources/day08/Day08_Example_2_Input.txt");
         this.realInput = AocUtils.readFile("src/test/java/resources/day08/Day08_RealInput.txt");
         this.folmingInput = AocUtils.readFile("src/test/java/resources/day08/Day08_FolmingInput.txt");
+        this.exampleInputPart2 = AocUtils.readFile("src/test/java/resources/day08/Day08_Example_Input_Part2.txt");
     }
 
     @Test
@@ -31,7 +33,7 @@ class Day08Test {
 
     @Test
     void testCountStepsToReachEndRealInput() {
-        assertEquals(251121738, Day08.countStepsToReachEnd(realInput));
+        assertEquals(   15517, Day08.countStepsToReachEnd(realInput));
     }
 
     @Test
