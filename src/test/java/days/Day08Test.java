@@ -48,7 +48,7 @@ class Day08Test {
 
     @Test
     void testCountStepsToReachEndFromAllAsRealInput() {
-        assertEquals(6, Day08.countStepsToReachEndFromAllAs(realInput));
+        assertEquals(14935034899483L, Day08.countStepsToReachEndFromAllAs(realInput));
     }
 
     @Test

@@ -2,7 +2,9 @@ package days;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class Day08 {
@@ -14,24 +16,46 @@ public class Day08 {
 
         long stepCount = 0;
 
+        // Mach für jeden **A-Node nen Key wie lange er nach **Z braucht und als Value die Steps
+        // Finde dann das kgv um überall nen gleichen stepcount zu haben, damit man sicherstellen kann, dass sie zur gleichen Zeit auf **Z sind
+        Map<Node, Long> nodeToCount = new HashMap<>();
+
         for (int i = 0; i < directions.size(); i++) {
             String direction = directions.get(i);
             overrideNodes(direction, initialNodes);
             stepCount++;
 
-            if (stepCount % 1_000_000_000 == 0) {
-                System.out.println(stepCount);
-            }
-
-            if (allNodesEndWithZ(initialNodes)) {
-                return stepCount;
+            if (allNodesEndWithZ(initialNodes, nodeToCount, stepCount)) {
+                break;
             }
 
             i = repeatLoopIfNecessary(i, directions);
         }
 
-        return 0;
+        List<Long> values = nodeToCount.values().stream().toList();
+        return findLCM(values);
     }
+
+    // KOMPLETT GEGOOGLET lol
+    private static long findLCM(List<Long> numbers) {
+        long result = numbers.get(0);
+        for (int i = 1; i < numbers.size(); i++) {
+            result = lcm(result, numbers.get(i));
+        }
+        return result;
+    }
+
+    private static long lcm(long a, long b) {
+        return (a * b) / gcd(a, b);
+    }
+
+    private static long gcd(long a, long b) {
+        if (b == 0) {
+            return a;
+        }
+        return gcd(b, a % b);
+    }
+    // ========================================================
 
     private static int repeatLoopIfNecessary(int i, List<String> directions) {
         if (i == directions.size() - 1) {
@@ -41,17 +65,19 @@ public class Day08 {
     }
 
     private static void overrideNodes(String direction, List<Node> nodes) {
-        nodes.replaceAll(node -> overrideNode(direction, node));
+        for (int i = 0; i < nodes.size(); i++) {
+            nodes.set(i, overrideNode(direction, nodes.get(i)));
+        }
     }
 
-    private static boolean allNodesEndWithZ(List<Node> nodes) {
+    private static boolean allNodesEndWithZ(List<Node> nodes, Map<Node, Long> nodeToCount, long stepCount) {
         for (Node node : nodes) {
-            if (!node.name.endsWith("Z")) {
-                return false;
+            if (node.name.endsWith("Z")) {
+                nodeToCount.putIfAbsent(node, stepCount);
             }
         }
 
-        return true;
+        return nodeToCount.size() == nodes.size();
     }
 
     private static List<Node> getInitialNodes(List<Node> nodes) {
@@ -144,6 +170,7 @@ public class Day08 {
         String name;
         Node nodeLeft;
         Node nodeRight;
+        List<Node> pathToZ;
 
         public Node(String name) {
             this.name = name;
