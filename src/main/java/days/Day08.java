@@ -57,10 +57,21 @@ public class Day08 {
 
         long product = 1;
         for (Map.Entry<Integer, Integer> entry : primes.entrySet()) {
-            product *= (long) Math.pow(entry.getKey(), entry.getValue());
+            product *= power(entry.getKey(), entry.getValue());
         }
 
         return product;
+    }
+
+    // maths is even more fun. math.pow() isn't
+    private static long power(int base, int exponent) {
+        long result = 1;
+        while (exponent > 0) {
+            result *= base;
+            exponent--;
+        }
+
+        return result;
     }
 
     private static Map<Integer, Integer> calcPrimeNumsOfVal(Long val) {
