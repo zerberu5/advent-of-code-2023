@@ -33,7 +33,7 @@ class Day08Test {
 
     @Test
     void testCountStepsToReachEndRealInput() {
-        assertEquals(   15517, Day08.countStepsToReachEnd(realInput));
+        assertEquals(15517, Day08.countStepsToReachEnd(realInput));
     }
 
     @Test

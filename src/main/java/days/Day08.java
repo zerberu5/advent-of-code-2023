@@ -17,7 +17,7 @@ public class Day08 {
         long stepCount = 0;
 
         // Mach für jeden **A-Node nen Key wie lange er nach **Z braucht und als Value die Steps
-        // Finde dann das kgv um überall nen gleichen stepcount zu haben, damit man sicherstellen kann, dass sie zur gleichen Zeit auf **Z sind
+        // Finde dann das kgv/lcm um überall nen gleichen stepcount zu haben, damit man sicherstellen kann, dass sie zur gleichen Zeit auf **Z sind
         Map<Node, Long> nodeToCount = new HashMap<>();
 
         for (int i = 0; i < directions.size(); i++) {
@@ -33,41 +33,95 @@ public class Day08 {
         }
 
         List<Long> values = nodeToCount.values().stream().toList();
-        return findLCM(values);
+        return calcLCM(values);
     }
 
-    // KOMPLETT GEGOOGLET lol
-    private static long findLCM(List<Long> numbers) {
-        long result = numbers.get(0);
-        for (int i = 1; i < numbers.size(); i++) {
-            result = lcm(result, numbers.get(i));
+    // maths and programming is fun
+    // https://www.matheretter.de/wiki/kgv-mehrere-zahlen
+    private static long calcLCM(List<Long> vals) {
+
+        List<Map<Integer, Integer>> valsToPrimes = new ArrayList<>();
+        for (Long val : vals) {
+            valsToPrimes.add(calcPrimeNumsOfVal(val));
         }
-        return result;
-    }
 
-    private static long lcm(long a, long b) {
-        return (a * b) / gcd(a, b);
-    }
-
-    private static long gcd(long a, long b) {
-        if (b == 0) {
-            return a;
+        Map<Integer, Integer> primes = new HashMap<>();
+        for (Map<Integer, Integer> valToPrime : valsToPrimes) {
+            for (Map.Entry<Integer, Integer> entry : valToPrime.entrySet()) {
+                primes.putIfAbsent(entry.getKey(), entry.getValue());
+                if (entry.getValue() > primes.get(entry.getKey())) {
+                    primes.put(entry.getKey(), entry.getValue());
+                }
+            }
         }
-        return gcd(b, a % b);
+
+        long product = 1;
+        for (Map.Entry<Integer, Integer> entry : primes.entrySet()) {
+            product *= (long) Math.pow(entry.getKey(), entry.getValue());
+        }
+
+        return product;
     }
-    // ========================================================
+
+    private static Map<Integer, Integer> calcPrimeNumsOfVal(Long val) {
+        Map<Integer, Integer> primeNumsOfValToCount = new HashMap<>();
+        List<Integer> primes = calcPrimesTilVal(val);
+
+        int idx = 0;
+        int count = 0;
+        while (val > 1) {
+            Integer prime = primes.get(idx);
+            if (val % prime == 0) {
+                val = val / prime;
+                primeNumsOfValToCount.put(prime, ++count);
+            } else {
+                idx++;
+                count = 0;
+            }
+        }
+
+        return primeNumsOfValToCount;
+    }
+
+    private static List<Integer> calcPrimesTilVal(Long val) {
+        List<Integer> primes = new ArrayList<>();
+
+        for (int i = 2; i <= val; i++) {
+            if (isPrime(i)) {
+                primes.add(i);
+            }
+        }
+
+        return primes;
+    }
+
+    private static boolean isPrime(int num) {
+        if (num < 2) {
+            return false;
+        }
+        if (num == 2) {
+            return true;
+        }
+
+        for (int i = 2; i < num / 2; i++) {
+            if (num % i == 0) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     private static int repeatLoopIfNecessary(int i, List<String> directions) {
         if (i == directions.size() - 1) {
             i = -1;
         }
+
         return i;
     }
 
     private static void overrideNodes(String direction, List<Node> nodes) {
-        for (int i = 0; i < nodes.size(); i++) {
-            nodes.set(i, overrideNode(direction, nodes.get(i)));
-        }
+        nodes.replaceAll(node -> overrideNode(direction, node));
     }
 
     private static boolean allNodesEndWithZ(List<Node> nodes, Map<Node, Long> nodeToCount, long stepCount) {
@@ -170,7 +224,6 @@ public class Day08 {
         String name;
         Node nodeLeft;
         Node nodeRight;
-        List<Node> pathToZ;
 
         public Node(String name) {
             this.name = name;
